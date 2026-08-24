@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Oregon DMVの車両title・登録・名義変更を日本語で案内します。" />
+    <title>Oregon Vehicle Guide</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Oregon Vehicle Guide ホーム">OR Vehicle Guide</a>
+      <a class="official-link" href="https://www.oregon.gov/odot/DMV/Pages/index.aspx" target="_blank" rel="noreferrer">Oregon DMV公式 ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">OREGON VEHICLE PROCEDURES</p>
+        <h1>車の手続き、<br />次にすることを明確に。</h1>
+        <p>車の購入、title、登録、名義変更を、日本語で順番に案内します。</p>
+        <div class="warning">これは一般的な案内です。最終判断・提出前の確認はOregon DMVへ。</div>
+      </section>
+
+      <section class="guide" aria-labelledby="guide-title">
+        <div class="section-heading">
+          <span>01</span>
+          <div><h2 id="guide-title">状況を選んでください</h2><p>個人情報の入力は必要ありません。</p></div>
+        </div>
+        <div id="flow-options" class="flow-grid" aria-live="polite"></div>
+        <article id="flow-result" class="result" hidden></article>
+      </section>
+
+      <section class="chat" aria-labelledby="chat-title">
+        <div class="section-heading">
+          <span>02</span>
+          <div><h2 id="chat-title">自由に質問する</h2><p>VIN、免許証番号、住所、SSNなどは入力しないでください。</p></div>
+        </div>
+        <form id="chat-form">
+          <label for="message">例：州外で買った中古車をPortlandで登録するには？</label>
+          <textarea id="message" maxlength="1200" rows="4" required></textarea>
+          <button type="submit">AIに質問する <span>→</span></button>
+        </form>
+        <div id="chat-status" role="status"></div>
+        <div id="chat-answer" class="answer" hidden></div>
+      </section>
+
+      <section class="sources" aria-labelledby="sources-title">
+        <div class="section-heading"><span>03</span><div><h2 id="sources-title">公式情報源</h2><p id="reviewed"></p></div></div>
+        <ul id="source-list"></ul>
+      </section>
+    </main>
+    <footer>Independent guide · Not affiliated with Oregon DMV</footer>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
+
