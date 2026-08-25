@@ -1,6 +1,17 @@
 import { AGE_GUIDES, FLOWS, JAPAN_OREGON_GUIDES, LAST_REVIEWED, SOURCES } from "../data/knowledge.js";
 
 const MAX_MESSAGE_LENGTH = 1200;
+const MAX_HISTORY_ITEMS = 8;
+const MAX_HISTORY_ITEM_LENGTH = 3500;
+
+export function normalizeHistory(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .slice(-MAX_HISTORY_ITEMS)
+    .filter(item => item && (item.role === "user" || item.role === "assistant") && typeof item.content === "string")
+    .map(item => ({ role: item.role, content: item.content.trim().slice(0, MAX_HISTORY_ITEM_LENGTH) }))
+    .filter(item => item.content);
+}
 
 export function extractOutputText(result) {
   if (typeof result?.output_text === "string" && result.output_text.trim()) {
@@ -43,6 +54,7 @@ export default async function handler(request, response) {
   try {
     const body = await readBody(request);
     const message = typeof body.message === "string" ? body.message.trim() : "";
+    const history = normalizeHistory(body.history);
     if (!message || message.length > MAX_MESSAGE_LENGTH) {
       return json(response, 400, { error: `質問は1～${MAX_MESSAGE_LENGTH}文字で入力してください。` });
     }
@@ -70,7 +82,7 @@ ${JSON.stringify(FLOWS)}
 ${JSON.stringify(AGE_GUIDES)}
 ${JSON.stringify(JAPAN_OREGON_GUIDES)}
 ${sourceText}`,
-        input: message,
+        input: [...history, { role: "user", content: message }],
         max_output_tokens: 700
       })
     });

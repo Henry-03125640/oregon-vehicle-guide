@@ -7,7 +7,10 @@ const reviewed = document.querySelector("#reviewed");
 const form = document.querySelector("#chat-form");
 const message = document.querySelector("#message");
 const status = document.querySelector("#chat-status");
-const answer = document.querySelector("#chat-answer");
+const chatThread = document.querySelector("#chat-thread");
+const chatActions = document.querySelector("#chat-actions");
+const printChat = document.querySelector("#print-chat");
+const shareChat = document.querySelector("#share-chat");
 const ageOptions = document.querySelector("#age-options");
 const ageResult = document.querySelector("#age-result");
 const transferOptions = document.querySelector("#transfer-options");
@@ -17,16 +20,16 @@ const dots = [...document.querySelectorAll(".hero-dot")];
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let activeSlide = 0;
 let slideTimer;
+const conversation = [];
 
 function escapeHtml(value) {
   return value.replace(/[&<>'"]/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" })[character]);
 }
 
-function renderAnswer(text) {
-  answer.replaceChildren();
+function appendLinkedText(container, text) {
   for (const token of tokenizeLinks(text)) {
     if (token.type === "text") {
-      answer.append(document.createTextNode(token.text));
+      container.append(document.createTextNode(token.text));
       continue;
     }
 
@@ -35,8 +38,26 @@ function renderAnswer(text) {
     link.textContent = token.text;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    answer.append(link);
+    container.append(link);
   }
+}
+
+function appendMessage(role, text) {
+  const item = document.createElement("article");
+  item.className = `chat-message chat-message--${role}`;
+  const label = document.createElement("p");
+  label.className = "chat-message__label";
+  label.textContent = role === "user" ? "あなた" : "AI案内";
+  const body = document.createElement("div");
+  body.className = "chat-message__body";
+  appendLinkedText(body, text);
+  item.append(label, body);
+  chatThread.append(item);
+  item.scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
+function conversationText() {
+  return conversation.map(item => `${item.role === "user" ? "あなた" : "AI案内"}:\n${item.content}`).join("\n\n");
 }
 
 function showSlide(index) {
@@ -142,20 +163,47 @@ function showFlow(flow) {
 form.addEventListener("submit", async event => {
   event.preventDefault();
   const submit = form.querySelector("button");
+  const currentMessage = message.value.trim();
+  const history = conversation.slice(-8);
   submit.disabled = true;
-  answer.hidden = true;
+  message.disabled = true;
+  appendMessage("user", currentMessage);
+  message.value = "";
   status.textContent = "公式情報をもとに確認しています…";
   try {
-    const response = await fetch("/api/chat", { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ message:message.value }) });
+    const response = await fetch("/api/chat", { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ message:currentMessage, history }) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "回答を取得できませんでした。");
-    renderAnswer(data.answer);
-    answer.hidden = false;
+    conversation.push({ role:"user", content:currentMessage }, { role:"assistant", content:data.answer });
+    if (conversation.length > 10) conversation.splice(0, conversation.length - 10);
+    appendMessage("assistant", data.answer);
+    chatActions.hidden = false;
+    form.querySelector("label").textContent = "続けて質問できます。前の回答を踏まえて案内します。";
+    message.placeholder = "例：必要な書類だけ一覧にして";
     status.textContent = "";
   } catch (error) {
     status.textContent = error.message;
   } finally {
     submit.disabled = false;
+    message.disabled = false;
+    message.focus();
+  }
+});
+
+printChat.addEventListener("click", () => window.print());
+
+shareChat.addEventListener("click", async () => {
+  const text = conversationText();
+  try {
+    if (navigator.share) {
+      await navigator.share({ title:"Oregon Vehicle Guideの案内", text, url:window.location.href });
+      status.textContent = "共有メニューを開きました。";
+    } else {
+      await navigator.clipboard.writeText(`${text}\n\n${window.location.href}`);
+      status.textContent = "会話をクリップボードへコピーしました。";
+    }
+  } catch (error) {
+    if (error.name !== "AbortError") status.textContent = "共有できませんでした。端末の設定をご確認ください。";
   }
 });
 

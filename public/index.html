@@ -80,7 +80,11 @@
           <button type="submit">AIに質問する <span>→</span></button>
         </form>
         <div id="chat-status" role="status"></div>
-        <div id="chat-answer" class="answer" hidden></div>
+        <div id="chat-thread" class="chat-thread" aria-live="polite"></div>
+        <div id="chat-actions" class="chat-actions" hidden>
+          <button id="print-chat" type="button">会話を印刷</button>
+          <button id="share-chat" type="button">会話を共有</button>
+        </div>
       </section>
 
       <section class="sources reveal" aria-labelledby="sources-title">
