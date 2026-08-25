@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { FLOWS, SOURCES, publicKnowledge } from "../data/knowledge.js";
+import { AGE_GUIDES, FLOWS, SOURCES, publicKnowledge } from "../data/knowledge.js";
 
 test("all guide flows contain actionable steps", () => {
   assert.ok(Object.keys(FLOWS).length >= 4);
@@ -22,3 +22,10 @@ test("public knowledge has a review date", () => {
   assert.match(publicKnowledge().lastReviewed, /^\d{4}-\d{2}-\d{2}$/);
 });
 
+test("age guide covers all Class C age groups", () => {
+  assert.deepEqual(Object.keys(AGE_GUIDES), ["under15", "age15", "age16to17", "age18to64", "age65plus"]);
+  for (const guide of Object.values(AGE_GUIDES)) {
+    assert.ok(guide.steps.length >= 3);
+    assert.equal(new URL(guide.sourceUrl).hostname, "www.oregon.gov");
+  }
+});

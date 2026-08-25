@@ -1,4 +1,4 @@
-import { FLOWS, LAST_REVIEWED, SOURCES } from "../data/knowledge.js";
+import { AGE_GUIDES, FLOWS, LAST_REVIEWED, SOURCES } from "../data/knowledge.js";
 
 const MAX_MESSAGE_LENGTH = 1200;
 
@@ -52,6 +52,7 @@ export default async function handler(request, response) {
 知識の確認日: ${LAST_REVIEWED}
 公式情報:
 ${JSON.stringify(FLOWS)}
+${JSON.stringify(AGE_GUIDES)}
 ${sourceText}`,
         input: message,
         max_output_tokens: 700
@@ -71,4 +72,3 @@ ${sourceText}`,
     return json(response, 400, { error: "リクエストを処理できませんでした。" });
   }
 }
-

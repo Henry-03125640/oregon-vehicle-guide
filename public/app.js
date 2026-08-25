@@ -6,6 +6,8 @@ const form = document.querySelector("#chat-form");
 const message = document.querySelector("#message");
 const status = document.querySelector("#chat-status");
 const answer = document.querySelector("#chat-answer");
+const ageOptions = document.querySelector("#age-options");
+const ageResult = document.querySelector("#age-result");
 const slides = [...document.querySelectorAll(".hero-slide")];
 const dots = [...document.querySelectorAll(".hero-dot")];
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -70,12 +72,28 @@ async function loadGuide() {
     options.append(button);
   });
 
+  Object.values(guide.ageGuides).forEach(ageGuide => {
+    const button = document.createElement("button");
+    button.className = "age-option";
+    button.type = "button";
+    button.textContent = ageGuide.label;
+    button.addEventListener("click", () => showAgeGuide(ageGuide, button));
+    ageOptions.append(button);
+  });
+
   reviewed.textContent = `情報確認日：${guide.lastReviewed}`;
   guide.sources.forEach(source => {
     const item = document.createElement("li");
     item.innerHTML = `<a href="${source.url}" target="_blank" rel="noreferrer"><span>${escapeHtml(source.title)}</span><span>↗</span></a>`;
     sourceList.append(item);
   });
+}
+
+function showAgeGuide(guide, selectedButton) {
+  ageOptions.querySelectorAll(".age-option").forEach(button => button.classList.toggle("is-active", button === selectedButton));
+  ageResult.innerHTML = `<div><p class="age-kicker">AGE-BASED GUIDE</p><h3>${escapeHtml(guide.title)}</h3><p>${escapeHtml(guide.summary)}</p></div><div><ol>${guide.steps.map(step => `<li>${escapeHtml(step)}</li>`).join("")}</ol><div class="notes"><strong>確認ポイント</strong><ul>${guide.notes.map(note => `<li>${escapeHtml(note)}</li>`).join("")}</ul></div><a class="age-source" href="${guide.sourceUrl}" target="_blank" rel="noreferrer">Oregon DMV公式情報を確認 ↗</a></div>`;
+  ageResult.hidden = false;
+  ageResult.scrollIntoView({ behavior:"smooth", block:"nearest" });
 }
 
 function showFlow(flow) {
