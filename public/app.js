@@ -1,3 +1,5 @@
+import { tokenizeLinks } from "./format.js";
+
 const options = document.querySelector("#flow-options");
 const result = document.querySelector("#flow-result");
 const sourceList = document.querySelector("#source-list");
@@ -18,6 +20,23 @@ let slideTimer;
 
 function escapeHtml(value) {
   return value.replace(/[&<>'"]/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" })[character]);
+}
+
+function renderAnswer(text) {
+  answer.replaceChildren();
+  for (const token of tokenizeLinks(text)) {
+    if (token.type === "text") {
+      answer.append(document.createTextNode(token.text));
+      continue;
+    }
+
+    const link = document.createElement("a");
+    link.href = token.href;
+    link.textContent = token.text;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    answer.append(link);
+  }
 }
 
 function showSlide(index) {
@@ -130,7 +149,7 @@ form.addEventListener("submit", async event => {
     const response = await fetch("/api/chat", { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ message:message.value }) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "回答を取得できませんでした。");
-    answer.textContent = data.answer;
+    renderAnswer(data.answer);
     answer.hidden = false;
     status.textContent = "";
   } catch (error) {
