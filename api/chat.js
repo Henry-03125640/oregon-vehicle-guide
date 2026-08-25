@@ -1,4 +1,4 @@
-import { AGE_GUIDES, FLOWS, LAST_REVIEWED, SOURCES } from "../data/knowledge.js";
+import { AGE_GUIDES, FLOWS, JAPAN_OREGON_GUIDES, LAST_REVIEWED, SOURCES } from "../data/knowledge.js";
 
 const MAX_MESSAGE_LENGTH = 1200;
 
@@ -53,6 +53,7 @@ export default async function handler(request, response) {
 公式情報:
 ${JSON.stringify(FLOWS)}
 ${JSON.stringify(AGE_GUIDES)}
+${JSON.stringify(JAPAN_OREGON_GUIDES)}
 ${sourceText}`,
         input: message,
         max_output_tokens: 700

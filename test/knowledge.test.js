@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { AGE_GUIDES, FLOWS, SOURCES, publicKnowledge } from "../data/knowledge.js";
+import { AGE_GUIDES, FLOWS, JAPAN_OREGON_GUIDES, SOURCES, publicKnowledge } from "../data/knowledge.js";
 
 test("all guide flows contain actionable steps", () => {
   assert.ok(Object.keys(FLOWS).length >= 4);
@@ -10,11 +10,20 @@ test("all guide flows contain actionable steps", () => {
   }
 });
 
-test("all sources are official Oregon government HTTPS pages", () => {
+test("all sources are official government HTTPS pages", () => {
+  const allowedHosts = new Set(["www.oregon.gov", "www.npa.go.jp", "www.keishicho.metro.tokyo.lg.jp"]);
   for (const source of SOURCES) {
     const url = new URL(source.url);
     assert.equal(url.protocol, "https:");
-    assert.equal(url.hostname, "www.oregon.gov");
+    assert.ok(allowedHosts.has(url.hostname));
+  }
+});
+
+test("Japan and Oregon conversion guide covers both directions", () => {
+  assert.deepEqual(Object.keys(JAPAN_OREGON_GUIDES), ["japanToOregon", "oregonToJapan"]);
+  for (const guide of Object.values(JAPAN_OREGON_GUIDES)) {
+    assert.equal(guide.exempt.length, 2);
+    assert.ok(guide.requirements.length >= 5);
   }
 });
 

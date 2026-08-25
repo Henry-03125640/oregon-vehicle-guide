@@ -8,6 +8,8 @@ const status = document.querySelector("#chat-status");
 const answer = document.querySelector("#chat-answer");
 const ageOptions = document.querySelector("#age-options");
 const ageResult = document.querySelector("#age-result");
+const transferOptions = document.querySelector("#transfer-options");
+const transferResult = document.querySelector("#transfer-result");
 const slides = [...document.querySelectorAll(".hero-slide")];
 const dots = [...document.querySelectorAll(".hero-dot")];
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -81,12 +83,28 @@ async function loadGuide() {
     ageOptions.append(button);
   });
 
+  Object.values(guide.japanOregonGuides).forEach(transferGuide => {
+    const button = document.createElement("button");
+    button.className = "transfer-option";
+    button.type = "button";
+    button.textContent = transferGuide.label;
+    button.addEventListener("click", () => showTransferGuide(transferGuide, button));
+    transferOptions.append(button);
+  });
+
   reviewed.textContent = `情報確認日：${guide.lastReviewed}`;
   guide.sources.forEach(source => {
     const item = document.createElement("li");
     item.innerHTML = `<a href="${source.url}" target="_blank" rel="noreferrer"><span>${escapeHtml(source.title)}</span><span>↗</span></a>`;
     sourceList.append(item);
   });
+}
+
+function showTransferGuide(guide, selectedButton) {
+  transferOptions.querySelectorAll(".transfer-option").forEach(button => button.classList.toggle("is-active", button === selectedButton));
+  transferResult.innerHTML = `<div class="transfer-intro"><p class="age-kicker">LICENSE CONVERSION</p><h3>${escapeHtml(guide.title)}</h3><p>${escapeHtml(guide.summary)}</p></div><div class="transfer-columns"><div><h4>免除対象</h4><ul class="exempt-list">${guide.exempt.map(item => `<li>✓ ${escapeHtml(item)}</li>`).join("")}</ul></div><div><h4>必要な条件・手続き</h4><ol>${guide.requirements.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ol><p class="transfer-caution">${escapeHtml(guide.caution)}</p><a class="age-source" href="${guide.sourceUrl}" target="_blank" rel="noreferrer">公式情報を確認 ↗</a></div></div>`;
+  transferResult.hidden = false;
+  transferResult.scrollIntoView({ behavior:"smooth", block:"nearest" });
 }
 
 function showAgeGuide(guide, selectedButton) {

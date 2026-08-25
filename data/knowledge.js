@@ -28,8 +28,51 @@ export const SOURCES = [
   {
     title: "Oregon DMV — Driver License Over 18",
     url: "https://www.oregon.gov/odot/DMV/Pages/DriverID/licenseget.aspx"
+  },
+  {
+    title: "警視庁 — 外国免許から日本免許への切替",
+    url: "https://www.keishicho.metro.tokyo.lg.jp/menkyo/menkyo/kokugai/kokugai05.html"
+  },
+  {
+    title: "警察庁 — 外国の運転免許をお持ちの方",
+    url: "https://www.npa.go.jp/policies/application/license_renewal/have_DL_issed_another_country.html/pdf/pdf/QA.html"
   }
 ];
+
+export const JAPAN_OREGON_GUIDES = {
+  japanToOregon: {
+    label: "日本 → Oregon",
+    title: "日本免許からOregon免許へ",
+    summary: "条件を満たす場合、Oregonのknowledge testとdrive testが免除される可能性があります。",
+    exempt: ["Class C knowledge test（学科試験）", "Class C drive test（実技試験）"],
+    requirements: [
+      "新しくOregonの居住者となり、Oregon DMVで免許を申請する",
+      "日本の運転免許証をOregon DMVへ提出する",
+      "日本の免許が有効、または失効後1年以内である",
+      "本人確認、生年月日、Oregon住所の証明を提出する",
+      "SSNを提供する、またはSSNを持たないことを電子的に申告する",
+      "vision test、写真撮影、該当料金の支払いを行う"
+    ],
+    caution: "Oregon DMVは公式ページで「may not have to」と案内しています。最終的な試験免除の適用はDMV窓口で確認してください。",
+    sourceUrl: "https://www.oregon.gov/odot/DMV/Pages/DriverID/licenseget.aspx"
+  },
+  oregonToJapan: {
+    label: "Oregon → 日本",
+    title: "Oregon免許から日本免許へ",
+    summary: "Oregon州免許は、日本の外免切替で知識確認・技能確認の免除対象として案内されています。",
+    exempt: ["知識確認", "技能確認"],
+    requirements: [
+      "有効なOregon州の運転免許証を所持している",
+      "免許取得後、米国で通算3か月以上滞在したことを証明する",
+      "日本での住所地を管轄する運転免許センター等へ本人が申請する",
+      "Oregon免許証と、指定機関が作成した日本語翻訳文を用意する",
+      "住民票など住所要件を満たす書類と、滞在期間を証明する資料を用意する",
+      "適性検査、書類審査、手数料など申請先の手続きを完了する"
+    ],
+    caution: "必要書類、予約方法、受付場所は都道府県警察により異なる場合があります。住所地の運転免許センターへ事前確認してください。",
+    sourceUrl: "https://www.keishicho.metro.tokyo.lg.jp/menkyo/menkyo/kokugai/kokugai05.html"
+  }
+};
 
 export const AGE_GUIDES = {
   under15: {
@@ -161,5 +204,5 @@ export const FLOWS = {
 };
 
 export function publicKnowledge() {
-  return { lastReviewed: LAST_REVIEWED, sources: SOURCES, flows: FLOWS, ageGuides: AGE_GUIDES };
+  return { lastReviewed: LAST_REVIEWED, sources: SOURCES, flows: FLOWS, ageGuides: AGE_GUIDES, japanOregonGuides: JAPAN_OREGON_GUIDES };
 }
