@@ -25,7 +25,3 @@ export function tokenizeLinks(text) {
 export function buildShareText(conversationText, pageUrl) {
   return `Oregon Vehicle Guideの案内\n\n${conversationText}\n\n案内サイト:\n${pageUrl}`;
 }
-
-export function buildLineShareUrl(text) {
-  return `https://social-plugins.line.me/lineit/share?text=${encodeURIComponent(text)}`;
-}
