@@ -8,19 +8,41 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
+    <div class="page-progress" aria-hidden="true"></div>
     <header class="site-header">
       <a class="brand" href="/" aria-label="Oregon Vehicle Guide ホーム">OR Vehicle Guide</a>
       <a class="official-link" href="https://www.oregon.gov/odot/DMV/Pages/index.aspx" target="_blank" rel="noreferrer">Oregon DMV公式 ↗</a>
     </header>
     <main>
       <section class="hero">
-        <p class="eyebrow">OREGON VEHICLE PROCEDURES</p>
-        <h1>車の手続き、<br />次にすることを明確に。</h1>
-        <p>車の購入、title、登録、名義変更を、日本語で順番に案内します。</p>
-        <div class="warning">これは一般的な案内です。最終判断・提出前の確認はOregon DMVへ。</div>
+        <div class="hero-orbit" aria-hidden="true"><span>OR</span></div>
+        <div class="hero-copy">
+          <p class="eyebrow">OREGON VEHICLE PROCEDURES</p>
+          <div class="hero-slides" aria-live="polite">
+            <div class="hero-slide is-active">
+              <h1>車の手続き、<br />次にすることを明確に。</h1>
+              <p>車の購入、title、登録、名義変更を、日本語で順番に案内します。</p>
+            </div>
+            <div class="hero-slide" aria-hidden="true">
+              <h1>書類も期限も、<br />ひとつずつ確実に。</h1>
+              <p>あなたの状況に合わせて、必要な準備をチェックリストにします。</p>
+            </div>
+            <div class="hero-slide" aria-hidden="true">
+              <h1>迷ったときは、<br />公式情報へまっすぐ。</h1>
+              <p>Oregon DMVの根拠ページと、次に開くべき手続きを案内します。</p>
+            </div>
+          </div>
+          <div class="hero-controls" aria-label="メッセージ切替">
+            <button class="hero-dot is-active" type="button" aria-label="メッセージ1を表示"></button>
+            <button class="hero-dot" type="button" aria-label="メッセージ2を表示"></button>
+            <button class="hero-dot" type="button" aria-label="メッセージ3を表示"></button>
+          </div>
+          <div class="warning">これは一般的な案内です。最終判断・提出前の確認はOregon DMVへ。</div>
+        </div>
+        <a class="scroll-cue" href="#guide-title"><span>SCROLL</span><i aria-hidden="true"></i></a>
       </section>
 
-      <section class="guide" aria-labelledby="guide-title">
+      <section class="guide reveal" aria-labelledby="guide-title">
         <div class="section-heading">
           <span>01</span>
           <div><h2 id="guide-title">状況を選んでください</h2><p>個人情報の入力は必要ありません。</p></div>
@@ -29,7 +51,7 @@
         <article id="flow-result" class="result" hidden></article>
       </section>
 
-      <section class="chat" aria-labelledby="chat-title">
+      <section class="chat reveal" aria-labelledby="chat-title">
         <div class="section-heading">
           <span>02</span>
           <div><h2 id="chat-title">自由に質問する</h2><p>VIN、免許証番号、住所、SSNなどは入力しないでください。</p></div>
@@ -43,7 +65,7 @@
         <div id="chat-answer" class="answer" hidden></div>
       </section>
 
-      <section class="sources" aria-labelledby="sources-title">
+      <section class="sources reveal" aria-labelledby="sources-title">
         <div class="section-heading"><span>03</span><div><h2 id="sources-title">公式情報源</h2><p id="reviewed"></p></div></div>
         <ul id="source-list"></ul>
       </section>
@@ -52,4 +74,3 @@
     <script type="module" src="/app.js"></script>
   </body>
 </html>
-

@@ -6,10 +6,55 @@ const form = document.querySelector("#chat-form");
 const message = document.querySelector("#message");
 const status = document.querySelector("#chat-status");
 const answer = document.querySelector("#chat-answer");
+const slides = [...document.querySelectorAll(".hero-slide")];
+const dots = [...document.querySelectorAll(".hero-dot")];
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let activeSlide = 0;
+let slideTimer;
 
 function escapeHtml(value) {
   return value.replace(/[&<>'"]/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" })[character]);
 }
+
+function showSlide(index) {
+  activeSlide = index;
+  slides.forEach((slide, slideIndex) => {
+    const active = slideIndex === index;
+    slide.classList.toggle("is-active", active);
+    slide.setAttribute("aria-hidden", String(!active));
+    dots[slideIndex].classList.toggle("is-active", active);
+  });
+}
+
+function startSlides() {
+  if (reduceMotion) return;
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => showSlide((activeSlide + 1) % slides.length), 5200);
+}
+
+dots.forEach((dot, index) => dot.addEventListener("click", () => {
+  showSlide(index);
+  startSlides();
+}));
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold:.14 });
+
+document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
+
+window.addEventListener("scroll", () => {
+  const available = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = available > 0 ? Math.min(100, window.scrollY / available * 100) : 0;
+  document.documentElement.style.setProperty("--page-progress", `${progress}%`);
+}, { passive:true });
+
+startSlides();
 
 async function loadGuide() {
   const response = await fetch("/api/guide");
@@ -60,4 +105,3 @@ form.addEventListener("submit", async event => {
 });
 
 loadGuide().catch(error => { options.textContent = error.message; });
-
