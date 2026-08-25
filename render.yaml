@@ -13,4 +13,9 @@ services:
         sync: false
       - key: OPENAI_MODEL
         value: gpt-5.4-mini
-
+      - key: REQUIRE_PRIVATE_ACCESS
+        value: "true"
+      - key: PRIVATE_SITE_USERNAME
+        value: owner
+      - key: PRIVATE_SITE_PASSWORD
+        sync: false

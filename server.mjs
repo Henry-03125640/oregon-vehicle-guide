@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import chatHandler from "./api/chat.js";
+import { authorizeRequest, requestLogin } from "./auth.js";
 import { publicKnowledge } from "./data/knowledge.js";
 
 const PORT = Number(process.env.PORT || 3000);
@@ -17,6 +18,8 @@ const server = createServer(async (request, response) => {
   try {
     const url = new URL(request.url, `http://${request.headers.host}`);
     if (url.pathname === "/health") return sendJson(response, 200, { status: "ok" });
+    const authorization = authorizeRequest(request);
+    if (!authorization.authorized) return requestLogin(response, authorization.configurationError);
     if (url.pathname === "/api/chat") return chatHandler(request, response);
     if (url.pathname === "/api/guide") return sendJson(response, 200, publicKnowledge());
 
