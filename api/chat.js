@@ -2,6 +2,21 @@ import { AGE_GUIDES, FLOWS, JAPAN_OREGON_GUIDES, LAST_REVIEWED, SOURCES } from "
 
 const MAX_MESSAGE_LENGTH = 1200;
 
+export function extractOutputText(result) {
+  if (typeof result?.output_text === "string" && result.output_text.trim()) {
+    return result.output_text.trim();
+  }
+
+  if (!Array.isArray(result?.output)) return "";
+  return result.output
+    .filter(item => item?.type === "message" && Array.isArray(item.content))
+    .flatMap(item => item.content)
+    .filter(content => content?.type === "output_text" && typeof content.text === "string")
+    .map(content => content.text.trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 function json(response, status, body) {
   response.statusCode = status;
   response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -67,7 +82,16 @@ ${sourceText}`,
     }
 
     const result = await responseFromOpenAI.json();
-    return json(response, 200, { answer: result.output_text || "あっぷる — 回答を生成できませんでした。" });
+    const answer = extractOutputText(result);
+    if (!answer) {
+      console.error("OpenAI response contained no text", {
+        requestId: responseFromOpenAI.headers.get("x-request-id"),
+        status: result.status,
+        incompleteReason: result.incomplete_details?.reason
+      });
+      return json(response, 502, { error: "AIの回答本文を取得できませんでした。もう一度お試しください。" });
+    }
+    return json(response, 200, { answer });
   } catch (error) {
     console.error("Chat handler error", { name: error.name, message: error.message });
     return json(response, 400, { error: "リクエストを処理できませんでした。" });
