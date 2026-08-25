@@ -22,3 +22,6 @@ export function tokenizeLinks(text) {
   return tokens;
 }
 
+export function buildShareText(conversationText, pageUrl) {
+  return `Oregon Vehicle Guideの案内\n\n${conversationText}\n\n案内サイト:\n${pageUrl}`;
+}

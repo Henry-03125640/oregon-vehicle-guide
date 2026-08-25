@@ -1,4 +1,4 @@
-import { tokenizeLinks } from "./format.js";
+import { buildShareText, tokenizeLinks } from "./format.js";
 
 const options = document.querySelector("#flow-options");
 const result = document.querySelector("#flow-result");
@@ -193,13 +193,13 @@ form.addEventListener("submit", async event => {
 printChat.addEventListener("click", () => window.print());
 
 shareChat.addEventListener("click", async () => {
-  const text = conversationText();
+  const text = buildShareText(conversationText(), window.location.href);
   try {
     if (navigator.share) {
-      await navigator.share({ title:"Oregon Vehicle Guideの案内", text, url:window.location.href });
+      await navigator.share({ title:"Oregon Vehicle Guideの案内", text });
       status.textContent = "共有メニューを開きました。";
     } else {
-      await navigator.clipboard.writeText(`${text}\n\n${window.location.href}`);
+      await navigator.clipboard.writeText(text);
       status.textContent = "会話をクリップボードへコピーしました。";
     }
   } catch (error) {
