@@ -1,4 +1,4 @@
-import { buildShareText, tokenizeLinks } from "./format.js";
+import { buildLineShareUrl, buildShareText, tokenizeLinks } from "./format.js";
 
 const options = document.querySelector("#flow-options");
 const result = document.querySelector("#flow-result");
@@ -11,6 +11,9 @@ const chatThread = document.querySelector("#chat-thread");
 const chatActions = document.querySelector("#chat-actions");
 const printChat = document.querySelector("#print-chat");
 const shareChat = document.querySelector("#share-chat");
+const shareLine = document.querySelector("#share-line");
+const copyKakao = document.querySelector("#copy-kakao");
+const copyInstagram = document.querySelector("#copy-instagram");
 const ageOptions = document.querySelector("#age-options");
 const ageResult = document.querySelector("#age-result");
 const transferOptions = document.querySelector("#transfer-options");
@@ -206,5 +209,24 @@ shareChat.addEventListener("click", async () => {
     if (error.name !== "AbortError") status.textContent = "共有できませんでした。端末の設定をご確認ください。";
   }
 });
+
+shareLine.addEventListener("click", () => {
+  const text = buildShareText(conversationText(), window.location.href);
+  window.open(buildLineShareUrl(text), "_blank", "noopener,noreferrer");
+  status.textContent = "LINEの共有画面を開きました。";
+});
+
+async function copyConversationFor(serviceName) {
+  const text = buildShareText(conversationText(), window.location.href);
+  try {
+    await navigator.clipboard.writeText(text);
+    status.textContent = `${serviceName}に貼り付けられるよう、会話をコピーしました。`;
+  } catch {
+    status.textContent = "会話をコピーできませんでした。ブラウザの権限をご確認ください。";
+  }
+}
+
+copyKakao.addEventListener("click", () => copyConversationFor("KakaoTalk"));
+copyInstagram.addEventListener("click", () => copyConversationFor("Instagram"));
 
 loadGuide().catch(error => { options.textContent = error.message; });

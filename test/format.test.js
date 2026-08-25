@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildShareText, tokenizeLinks } from "../public/format.js";
+import { buildLineShareUrl, buildShareText, tokenizeLinks } from "../public/format.js";
 
 test("turns HTTPS URLs into link tokens", () => {
   assert.deepEqual(tokenizeLinks("公式: https://www.oregon.gov/test"), [
@@ -26,4 +26,9 @@ test("builds one share body containing conversation and page URL", () => {
   assert.match(result, /あなた:\n質問/);
   assert.match(result, /AI案内:\n回答/);
   assert.match(result, /案内サイト:\nhttps:\/\/example\.com\/$/);
+});
+
+test("builds an encoded official LINE share URL", () => {
+  const result = buildLineShareUrl("会話\nhttps://example.com/");
+  assert.equal(result, "https://social-plugins.line.me/lineit/share?text=%E4%BC%9A%E8%A9%B1%0Ahttps%3A%2F%2Fexample.com%2F");
 });
